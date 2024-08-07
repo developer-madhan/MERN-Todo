@@ -67,18 +67,22 @@ app.get("/todos", async (req, res) => {
 });
 
 // update a todo item
-app.put("/todos/:id", (req, res) => {
+app.put("/todos/:id", async (req, res) => {
   try {
     const { title, description } = req.body;
     const id = req.params.id;
-    const updatedTodo = todoModal.findByIdAndUpdate(id, {
-      title,
-      description,
-    });
+    const updatedTodo = await todoModal.findByIdAndUpdate(
+      id,
+      {
+        title,
+        description,
+      },
+      { new: true }
+    );
     if (!updatedTodo) {
       return res.status(404).json({ message: "Todo not found!" });
     }
-    res.json(updatedTodo)
+    res.json(updatedTodo);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
