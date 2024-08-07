@@ -24,33 +24,46 @@ mongoose
   })
   .catch((err) => {
     console.log(err);
-  })
+  });
 
 //   create schema
 const todoSchema = new mongoose.Schema({
-    title:String,
-    description:String
-})
+  title: { required: true, type: String },
+  description: String,
+});
 
 // create modal
-const todoModal =mongoose.model('Todo',todoSchema);
+const todoModal = mongoose.model("Todo", todoSchema);
 
 // Create a new todo item
-app.post("/todos", (req, res) => {
+app.post("/todos", async (req, res) => {
   const { title, description } = req.body;
-  const newTodo = {
-    id: todos.length + 1,
-    title,
-    description,
-  };
-  todos.push(newTodo);
-  console.log(todos);
-  res.status(201).json(newTodo);
+  //   const newTodo = {
+  //     id: todos.length + 1,
+  //     title,
+  //     description,
+  //   };
+  //   todos.push(newTodo);
+  //   console.log(todos);
+  try {
+    const newTodo = new todoModal({ title, description });
+    await newTodo.save();
+    res.status(201).json(newTodo);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // get all items
-app.get("/todos", (req, res) => {
-  res.json(todos);
+app.get("/todos", async (req, res) => {
+  try {
+    const todos = await todoModal.find();
+    res.json(todos);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // start the server
