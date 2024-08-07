@@ -89,6 +89,18 @@ app.put("/todos/:id", async (req, res) => {
   }
 });
 
+// Delete a todo todo item
+app.delete("/todos/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    await todoModal.findByIdAndDelete(id);
+    res.status(204).end();
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // start the server
 const port = 8000;
 app.listen(port, () => {
