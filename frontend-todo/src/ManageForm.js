@@ -7,49 +7,67 @@ const ManageForm = () => {
   return (
     <>
       <Container>
-        <Row>
-          <Formik
-            initialValues={{ title: "", list: "" }}  // Ensure this structure is correct
-            validationSchema={Yup.object({
-                title: Yup.string().required("Required"),
-                list: Yup.string().required("Required"),
-            })}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                console.log(values);
-                setSubmitting(false); // Reset isSubmitting to false after submission
-              }, 400);
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form>
+        <Formik
+          initialValues={{ title: "", list: "" }} // Ensure this structure is correct
+          validationSchema={Yup.object({
+            title: Yup.string().required("Required"),
+            list: Yup.string().required("Required"),
+          })}
+          onSubmit={(values, { setSubmitting }) => {
+            setTimeout(() => {
+              console.log(values);
+              setSubmitting(false); // Reset isSubmitting to false after submission
+            }, 400);
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <Row>
                 <Col md={5}>
-                  <label htmlFor="title">Title</label>
-                  <Field type="text" name="title" />
-                  <ErrorMessage
-                    name="title"
-                    component="div"
-                    className="text-danger"
-                  />
+                  <Row>
+                    <Col md={3}>
+                      <label htmlFor="title"><strong>Title</strong></label>
+                    </Col>
+                    <Col md={9}>
+                      <Field
+                        type="text"
+                        className="form-control"
+                        name="title"
+                      />
+                    </Col>
+
+                    <ErrorMessage
+                      name="title"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </Row>
                 </Col>
                 <Col md={5}>
-                  <label htmlFor="list">List</label>
-                  <Field type="text" name="list" />
-                  <ErrorMessage
-                    name="list"
-                    component="div"
-                    className="text-danger"
-                  />
+                  <Row>
+                    <Col md={3}>
+                      <label htmlFor="list"><strong>List</strong></label>
+                    </Col>
+                    <Col md={9}>
+                      <Field type="text" className="form-control" name="list" />
+                    </Col>
+
+                    <ErrorMessage
+                      name="list"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </Row>
                 </Col>
                 <Col md={2}>
                   <Button type="submit" disabled={isSubmitting}>
                     Add
                   </Button>
                 </Col>
-              </Form>
-            )}
-          </Formik>
-        </Row>
+              </Row>
+            </Form>
+          )}
+        </Formik>
       </Container>
     </>
   );
