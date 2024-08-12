@@ -1,5 +1,6 @@
 import { Container, Card, Button, Col, Row } from "react-bootstrap";
 import "./App.css";
+import ManageForm from "./ManageForm";
 
 function App() {
   const handleEdit = () => {
@@ -17,6 +18,10 @@ function App() {
           <Col lg={12} className="text-center">
             <h1>Welcome for my Todo App</h1>
           </Col>
+        </Row>
+
+        <Row className="my-2">
+          <ManageForm/>
         </Row>
         
         <Row className="my-2">
