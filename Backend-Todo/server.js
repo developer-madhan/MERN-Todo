@@ -89,7 +89,7 @@ app.put("/todos/:id", async (req, res) => {
   }
 });
 
-// Delete a todo todo item
+// Delete a todo item
 app.delete("/todos/:id", async (req, res) => {
   try {
     const id = req.params.id;
