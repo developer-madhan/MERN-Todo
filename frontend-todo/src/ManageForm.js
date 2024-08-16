@@ -2,31 +2,41 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { createTodo } from "./data-service/todoApi";
 
 const ManageForm = () => {
   return (
     <>
       <Container>
         <Formik
-          initialValues={{ title: "", list: "" }} // Ensure this structure is correct
+          enableReinitialize
+          initialValues={{ title: "", description: "" }} // Ensure this structure is correct
           validationSchema={Yup.object({
             title: Yup.string().required("Required"),
-            list: Yup.string().required("Required"),
+            description: Yup.string().required("Required"),
           })}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              console.log(values);
-              setSubmitting(false); // Reset isSubmitting to false after submission
-            }, 400);
+          onSubmit={async (values, { resetForm }) => {
+            try {
+              const response = await createTodo(values);
+              if (response.status === 201) {
+                // Reset the form after successful creation
+                resetForm();
+              }
+              console.log("response", response);
+            } catch (error) {
+              console.error("error", error);
+            }
           }}
         >
-          {({ isSubmitting }) => (
+          {() => (
             <Form>
               <Row>
                 <Col md={5}>
                   <Row>
                     <Col md={3}>
-                      <label htmlFor="title"><strong>Title</strong></label>
+                      <label htmlFor="title">
+                        <strong>Title</strong>
+                      </label>
                     </Col>
                     <Col md={9}>
                       <Field
@@ -46,23 +56,27 @@ const ManageForm = () => {
                 <Col md={5}>
                   <Row>
                     <Col md={3}>
-                      <label htmlFor="list"><strong>List</strong></label>
+                      <label htmlFor="description">
+                        <strong>Description</strong>
+                      </label>
                     </Col>
                     <Col md={9}>
-                      <Field type="text" className="form-control" name="list" />
+                      <Field
+                        type="text"
+                        className="form-control"
+                        name="description"
+                      />
                     </Col>
 
                     <ErrorMessage
-                      name="list"
+                      name="description"
                       component="div"
                       className="text-danger"
                     />
                   </Row>
                 </Col>
                 <Col md={2}>
-                  <Button type="submit" disabled={isSubmitting}>
-                    Add
-                  </Button>
+                  <Button type="submit">Add</Button>
                 </Col>
               </Row>
             </Form>
