@@ -2,27 +2,36 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { createTodo } from "./data-service/todoApi";
+import { createTodo, updateTodo } from "./data-service/todoApi";
 
-const ManageForm = () => {
+const ManageForm = ({ todo, onSave }) => {
+  // Determine initial values based on whether we're editing or creating
+  const initialValues = todo
+    ? { title: todo.title, description: todo.description }
+    : { title: "", description: "" };
+
   return (
     <>
       <Container>
         <Formik
           enableReinitialize
-          initialValues={{ title: "", description: "" }} // Ensure this structure is correct
+          initialValues={initialValues}
           validationSchema={Yup.object({
             title: Yup.string().required("Required"),
             description: Yup.string().required("Required"),
           })}
           onSubmit={async (values, { resetForm }) => {
             try {
-              const response = await createTodo(values);
-              if (response.status === 201) {
-                // Reset the form after successful creation
-                resetForm();
+              if (todo) {
+                // Edit existing todo
+                await updateTodo(todo._id, values);
+              } else {
+                // Create new todo
+                await createTodo(values);
               }
-              console.log("response", response);
+              // Call the onSave callback to refetch data or reset form state
+              onSave();
+              resetForm();
             } catch (error) {
               console.error("error", error);
             }
@@ -45,7 +54,6 @@ const ManageForm = () => {
                         name="title"
                       />
                     </Col>
-
                     <ErrorMessage
                       name="title"
                       component="div"
@@ -67,7 +75,6 @@ const ManageForm = () => {
                         name="description"
                       />
                     </Col>
-
                     <ErrorMessage
                       name="description"
                       component="div"
@@ -76,7 +83,7 @@ const ManageForm = () => {
                   </Row>
                 </Col>
                 <Col md={2}>
-                  <Button type="submit">Add</Button>
+                  <Button type="submit">{todo ? "Update" : "Add"}</Button>
                 </Col>
               </Row>
             </Form>

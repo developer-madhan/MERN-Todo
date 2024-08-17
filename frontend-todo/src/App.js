@@ -6,6 +6,7 @@ import { deleteTodo, getAllTodo, updateTodo } from "./data-service/todoApi";
 
 function App() {
   const [todoLists, setTodolists] = useState([]);
+  const [selectedTodo, setSelectedTodo] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -21,39 +22,36 @@ function App() {
   };
 
   const handleDone = async (id) => {
-    // console.log("handleDone", id);
     try {
-      // Find the todo item by id
-      const updatedTodo = todoLists.find(todo => todo._id === id);
+      const updatedTodo = todoLists.find((todo) => todo._id === id);
       if (updatedTodo) {
-        // Toggle the isDone status
         const updatedStatus = { ...updatedTodo, isDone: !updatedTodo.isDone };
-  
-        // Send the updated status to the backend
         await updateTodo(id, updatedStatus);
-  
-        // Update the local state
-        setTodolists(todoLists.map(todo =>
-          todo._id === id ? updatedStatus : todo
-        ));
+        setTodolists(
+          todoLists.map((todo) => (todo._id === id ? updatedStatus : todo))
+        );
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleEdit = (id) => {
-    console.log("handleEdit", id);
+  const handleEdit = (todo) => {
+    setSelectedTodo(todo);
   };
 
   const handleDelete = async (id) => {
-    // console.log("handleDelete", id);
     try {
-      const res = await deleteTodo(id);
+      await deleteTodo(id);
       fetchData();
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSave = () => {
+    fetchData(); // Refetch data to reflect changes
+    setSelectedTodo(null); // Close the form or reset the selected todo
   };
 
   return (
@@ -66,7 +64,7 @@ function App() {
         </Row>
 
         <Row className="my-2">
-          <ManageForm />
+          <ManageForm todo={selectedTodo} onSave={handleSave} />
         </Row>
 
         <Row className="my-2">
@@ -75,7 +73,13 @@ function App() {
               <Card>
                 <Card.Body>
                   <div className="d-flex justify-content-between">
-                    <Card.Title className={todoList.isDone ? "text-decoration-line-through" : ""}>{todoList.title}</Card.Title>
+                    <Card.Title
+                      className={
+                        todoList.isDone ? "text-decoration-line-through" : ""
+                      }
+                    >
+                      {todoList.title}
+                    </Card.Title>
                     <Button
                       type="button"
                       onClick={() => handleDone(todoList._id)}
@@ -84,10 +88,16 @@ function App() {
                       Done
                     </Button>
                   </div>
-                  <Card.Text className={todoList.isDone ? "text-decoration-line-through" : ""} >{todoList.description}</Card.Text>
+                  <Card.Text
+                    className={
+                      todoList.isDone ? "text-decoration-line-through" : ""
+                    }
+                  >
+                    {todoList.description}
+                  </Card.Text>
                   <Button
                     type="button"
-                    onClick={() => handleEdit(todoList._id)}
+                    onClick={() => handleEdit(todoList)}
                     className="me-2"
                   >
                     Edit
