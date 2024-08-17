@@ -32,6 +32,7 @@ mongoose
 const todoSchema = new mongoose.Schema({
   title: { required: true, type: String },
   description: String,
+  isDone:{type:Boolean,default:false}
 });
 
 // create modal
@@ -71,13 +72,14 @@ app.get("/todos", async (req, res) => {
 // update a todo item
 app.put("/todos/:id", async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description,isDone } = req.body;
     const id = req.params.id;
     const updatedTodo = await todoModal.findByIdAndUpdate(
       id,
       {
         title,
         description,
+        isDone
       },
       { new: true }
     );

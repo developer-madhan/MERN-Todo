@@ -14,7 +14,7 @@ function App() {
   const fetchData = async () => {
     try {
       const response = await getAllTodo();
-      setTodolists(response);
+      setTodolists(response || []);
     } catch (error) {
       console.log(error);
     }
