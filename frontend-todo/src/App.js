@@ -2,7 +2,7 @@ import { Container, Card, Button, Col, Row } from "react-bootstrap";
 import "./App.css";
 import ManageForm from "./ManageForm";
 import { useEffect, useState } from "react";
-import { deleteTodo, getAllTodo } from "./data-service/todoApi";
+import { deleteTodo, getAllTodo, updateTodo } from "./data-service/todoApi";
 
 function App() {
   const [todoLists, setTodolists] = useState([]);
@@ -20,8 +20,26 @@ function App() {
     }
   };
 
-  const handleDone = (id) => {
-    console.log("handleDone", id);
+  const handleDone = async (id) => {
+    // console.log("handleDone", id);
+    try {
+      // Find the todo item by id
+      const updatedTodo = todoLists.find(todo => todo._id === id);
+      if (updatedTodo) {
+        // Toggle the isDone status
+        const updatedStatus = { ...updatedTodo, isDone: !updatedTodo.isDone };
+  
+        // Send the updated status to the backend
+        await updateTodo(id, updatedStatus);
+  
+        // Update the local state
+        setTodolists(todoLists.map(todo =>
+          todo._id === id ? updatedStatus : todo
+        ));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleEdit = (id) => {
@@ -29,7 +47,7 @@ function App() {
   };
 
   const handleDelete = async (id) => {
-    console.log("handleDelete", id);
+    // console.log("handleDelete", id);
     try {
       const res = await deleteTodo(id);
       fetchData();
@@ -57,7 +75,7 @@ function App() {
               <Card>
                 <Card.Body>
                   <div className="d-flex justify-content-between">
-                    <Card.Title>{todoList.title}</Card.Title>
+                    <Card.Title className={todoList.isDone ? "text-decoration-line-through" : ""}>{todoList.title}</Card.Title>
                     <Button
                       type="button"
                       onClick={() => handleDone(todoList._id)}
@@ -66,7 +84,7 @@ function App() {
                       Done
                     </Button>
                   </div>
-                  <Card.Text >{todoList.description}</Card.Text>
+                  <Card.Text className={todoList.isDone ? "text-decoration-line-through" : ""} >{todoList.description}</Card.Text>
                   <Button
                     type="button"
                     onClick={() => handleEdit(todoList._id)}

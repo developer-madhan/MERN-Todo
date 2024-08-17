@@ -42,3 +42,17 @@ export const deleteTodo = async (id) => {
     console.log("deleteTodo :", error);
   }
 };
+
+//  Update the Todo by id
+export const updateTodo = async (id,todoData) => {
+  try {
+    const response = await axios.put(`${API_URL}/todos/${id}`,todoData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("updateTodo :", error);
+  }
+}
