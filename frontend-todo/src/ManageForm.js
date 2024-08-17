@@ -18,7 +18,7 @@ const ManageForm = ({ todo, onSave }) => {
           initialValues={initialValues}
           validationSchema={Yup.object({
             title: Yup.string().required("Required"),
-            description: Yup.string().required("Required"),
+            description: Yup.string(),
           })}
           onSubmit={async (values, { resetForm }) => {
             try {
