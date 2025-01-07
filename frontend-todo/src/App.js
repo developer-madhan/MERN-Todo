@@ -84,8 +84,8 @@ function App() {
                       type="button"
                       onClick={() => handleDone(todoList._id)}
                       className="me-2"
-                    >
-                      Done
+                    >                      
+                      {todoList.isDone ? "Finished" : "isFinish"}
                     </Button>
                   </div>
                   <Card.Text
